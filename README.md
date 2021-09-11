@@ -1,4 +1,4 @@
-# walnut-lib-fileaccessor
+# PHP File Accessor
 A tiny wrapper for basic CRUD-like file manipulations
 
 ```php
