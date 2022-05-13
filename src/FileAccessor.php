@@ -12,6 +12,13 @@ interface FileAccessor {
 
 	/**
 	 * @param string $file
+	 * @param string $content
+	 * @throws FileAccessorException
+	 */
+	public function appendToFile(string $file, string $content): void;
+
+	/**
+	 * @param string $file
 	 * @return string
 	 * @throws FileAccessorException
 	 */

@@ -15,6 +15,8 @@ final class PhpFileAccessorTest extends TestCase {
 		$fileAccessor->writeToFile(self::FILE_NAME, self::FILE_CONTENT);
 		$this->assertTrue($fileAccessor->fileExists(self::FILE_NAME));
 		$this->assertEquals(self::FILE_CONTENT, $fileAccessor->readFromFile(self::FILE_NAME));
+		$fileAccessor->appendToFile(self::FILE_NAME, self::FILE_CONTENT);
+		$this->assertEquals(self::FILE_CONTENT . self::FILE_CONTENT, $fileAccessor->readFromFile(self::FILE_NAME));
 		$fileAccessor->removeFile(self::FILE_NAME);
 		$this->assertFalse($fileAccessor->fileExists(self::FILE_NAME));
 	}
@@ -33,6 +35,24 @@ final class PhpFileAccessorTest extends TestCase {
 		flock($fp, LOCK_EX);
 		try {
 			$fileAccessor->writeToFile(self::FILE_NAME, self::FILE_CONTENT);
+		} catch (Throwable $ex) {
+			flock($fp, LOCK_UN);
+			fclose($fp);
+			throw $ex;
+		}
+		flock($fp, LOCK_UN);
+		fclose($fp);
+		@unlink(self::FILE_NAME);
+	}
+
+	public function testIntegrationErrorAppend(): void {
+		$this->expectException(FileAccessorException::class);
+		$fileAccessor = new PhpFileAccessor;
+
+		$fp = fopen(self::FILE_NAME, 'wb');
+		flock($fp, LOCK_EX);
+		try {
+			$fileAccessor->appendToFile(self::FILE_NAME, self::FILE_CONTENT);
 		} catch (Throwable $ex) {
 			flock($fp, LOCK_UN);
 			fclose($fp);

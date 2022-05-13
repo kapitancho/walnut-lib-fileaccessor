@@ -21,6 +21,18 @@ final class PhpFileAccessor implements FileAccessor {
 
 	/**
 	 * @param string $file
+	 * @param string $content
+	 * @throws FileAccessorException
+	 */
+	public function appendToFile(string $file, string $content): void {
+		$result = @file_put_contents($file, $content, FILE_APPEND);
+		if ($result === false) {
+			throw new FileAccessorException(sprintf(self::WRITE_ERROR, $file));
+		}
+	}
+
+	/**
+	 * @param string $file
 	 * @return string
 	 * @throws FileAccessorException
 	 */
